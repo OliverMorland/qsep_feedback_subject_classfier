@@ -17,21 +17,23 @@ def generate_xlsx_with_collapsed_rows(input_file: str, output_file: str):
     # Write the collapsed DataFrame to an output XLSX file
     dataframe_to_xlsx(collapsed_df, output_file)
 
-def combine_text_values(column_series):
+def sum_numerical_values(column_series):
     """
-    Combine text values in a column series by joining them with spaces.
+    Sum numerical values in a column series, treating NaN/None as 0.
     
     Args:
-        column_series: A pandas Series containing values to combine
+        column_series: A pandas Series containing numerical values to sum
         
     Returns:
-        str: Combined text values separated by spaces
+        int: Sum of all numerical values in the series
     """
-    # Remove NaN values, convert to string, and join with spaces
-    non_null_values = column_series.dropna()
-    string_values = non_null_values.astype(str)
-    combined_text = ' '.join(string_values)
-    return combined_text
+    # Fill NaN values with 0 and sum all values
+    filled_values = column_series.fillna(0)
+    total_sum = filled_values.sum()
+    
+    # Convert to integer
+    result = int(total_sum)
+    return result
 
 
 def get_non_subject_columns(dataframe: pd.DataFrame) -> list:
@@ -54,43 +56,43 @@ def get_non_subject_columns(dataframe: pd.DataFrame) -> list:
     return non_subject_columns
 
 
-def combine_column_values_by_subject(grouped_data, column_name: str) -> list:
+def sum_column_values_by_subject(grouped_data, column_name: str) -> list:
     """
-    Combine text values for a specific column across all subject groups.
+    Sum numerical values for a specific column across all subject groups.
     
     Args:
         grouped_data: Pandas GroupBy object grouped by 'Subject'
         column_name (str): Name of the column to process
         
     Returns:
-        list: List of combined text values for each subject group
+        list: List of summed numerical values for each subject group
     """
     column_groups = grouped_data[column_name]
-    combined_values = []
+    summed_values = []
     
     for subject_name, column_series in column_groups:
-        combined_text = combine_text_values(column_series)
-        combined_values.append(combined_text)
+        summed_value = sum_numerical_values(column_series)
+        summed_values.append(summed_value)
     
-    return combined_values
+    return summed_values
 
 
 def build_aggregation_dictionary(grouped_data, non_subject_columns: list) -> dict:
     """
-    Build a dictionary with combined values for all non-subject columns.
+    Build a dictionary with summed values for all non-subject columns.
     
     Args:
         grouped_data: Pandas GroupBy object grouped by 'Subject'
         non_subject_columns (list): List of column names to process
         
     Returns:
-        dict: Dictionary with column names as keys and combined values as values
+        dict: Dictionary with column names as keys and summed values as values
     """
     aggregation_dict = {}
     
     for column_name in non_subject_columns:
-        combined_values = combine_column_values_by_subject(grouped_data, column_name)
-        aggregation_dict[column_name] = combined_values
+        summed_values = sum_column_values_by_subject(grouped_data, column_name)
+        aggregation_dict[column_name] = summed_values
     
     return aggregation_dict
 
@@ -117,30 +119,39 @@ def create_collapsed_dataframe(aggregation_dict: dict, unique_subjects: list) ->
 
 def collapse_rows(input_dataframe: pd.DataFrame) -> pd.DataFrame:
     """
-    Collapse rows in the input DataFrame by combining text in the 'Subject' column and add numbers in other columns.
+    Collapse rows in the input DataFrame by grouping by 'Subject' column and summing numbers in other columns.
 
     Args:
         input_dataframe (pd.DataFrame): The input DataFrame with a 'Subject' column.
 
     Returns:
-        pd.DataFrame: A new DataFrame with collapsed rows.
+        pd.DataFrame: A new DataFrame with collapsed rows and summed numerical values.
     """
-    # Group by 'Subject'
-    grouped_data = input_dataframe.groupby('Subject')
+    try:
+        # Group by 'Subject'
+        grouped_data = input_dataframe.groupby('Subject')
+        
+        # Get all column names except 'Subject'
+        non_subject_columns = get_non_subject_columns(input_dataframe)
+        
+        # Build dictionary with aggregated values for all columns
+        aggregation_dict = build_aggregation_dictionary(grouped_data, non_subject_columns)
+        
+        # Get unique subject names to use as index
+        unique_subjects = list(grouped_data.groups.keys())
+        
+        # Create the result DataFrame
+        collapsed = create_collapsed_dataframe(aggregation_dict, unique_subjects)
+        
+        return collapsed
+        
+    except KeyError as key_error:
+        print(f"DataFrame could not be created due to a missing column: {key_error}")
+        return pd.DataFrame()
     
-    # Get all column names except 'Subject'
-    non_subject_columns = get_non_subject_columns(input_dataframe)
-    
-    # Build dictionary with aggregated values for all columns
-    aggregation_dict = build_aggregation_dictionary(grouped_data, non_subject_columns)
-    
-    # Get unique subject names to use as index
-    unique_subjects = list(grouped_data.groups.keys())
-    
-    # Create the result DataFrame
-    collapsed = create_collapsed_dataframe(aggregation_dict, unique_subjects)
-    
-    return collapsed
+    except Exception as general_error:
+        print(f"DataFrame could not be created due to an unexpected error: {general_error}")
+        return pd.DataFrame()
 
 def xlsx_to_dataframe(file_path: str) -> pd.DataFrame:
     """
