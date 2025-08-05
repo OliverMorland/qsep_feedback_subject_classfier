@@ -2,3 +2,4 @@ __pycache__
 venv/
 *.pyc
 qsep_feedback_subject_classifier.egg-info/
+.claude/
