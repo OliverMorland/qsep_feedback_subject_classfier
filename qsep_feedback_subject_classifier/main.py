@@ -4,7 +4,7 @@ from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, data
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
 
 
-def extract_first_word_from_subject(dataframe: pd.DataFrame) -> pd.DataFrame:
+def categorize_subjects(dataframe: pd.DataFrame) -> pd.DataFrame:
     """
     Replace strings in the 'Subject' column with only the first word.
     
@@ -56,7 +56,7 @@ def main():
     output_file = r"docs\output\Katie_July_Collapsed.xlsx"
     
     input_df = xlsx_to_dataframe(input_file)
-    modified_df = extract_first_word_from_subject(input_df)
+    modified_df = categorize_subjects(input_df)
     collapsed_df = collapse_rows(modified_df)
     output_df = dataframe_to_xlsx(collapsed_df, output_file)
     print(f"Collapsed data saved to {output_file}")
