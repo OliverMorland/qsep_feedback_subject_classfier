@@ -5,6 +5,7 @@ Module for converting XLSM files to XLSX format while preserving data structure.
 import pandas as pd
 from pathlib import Path
 from typing import Dict, Any
+import categorize_label
 
 
 def convert_xlsm_to_xlsx(input_path: str, output_path: str) -> bool:
@@ -50,7 +51,8 @@ def convert_xlsm_to_xlsx(input_path: str, output_path: str) -> bool:
                 cols = df.columns.tolist()
                 
                 # Insert Categorized_Subject as second column (index 1)
-                df.insert(1, 'Categorized_Subject', df['Subject'])
+                df.insert(1, 'Categorized_Subject', df['Subject'].apply(categorize_label.categorize))
+
             
             sheet_data[sheet_name] = df
         
