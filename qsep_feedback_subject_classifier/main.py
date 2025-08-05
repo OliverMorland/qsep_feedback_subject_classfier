@@ -1,22 +1,65 @@
 import phrase_classifier
-from qsep_feedback_subject_classifier.xlsm_to_xlsx_converter import convert_xlsm_to_xlsx
+import pandas as pd
+from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx
+from qsep_feedback_subject_classifier.row_collapser import collapse_rows
+
+
+def categorize_subjects(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """
+    Replace strings in the 'Subject' column with only the first word.
+    
+    Args:
+        dataframe (pd.DataFrame): Input DataFrame with a 'Subject' column
+        
+    Returns:
+        pd.DataFrame: DataFrame with modified 'Subject' column containing only first words
+    """
+    try:
+        # Check if 'Subject' column exists
+        if 'Subject' not in dataframe.columns:
+            print("Warning: 'Subject' column not found in DataFrame")
+            return dataframe
+        
+        # Create a copy to avoid modifying the original DataFrame
+        modified_df = dataframe.copy()
+        
+        # Extract first word from each Subject entry
+        subject_values = modified_df['Subject']
+        first_words = []
+        
+        for subject_value in subject_values:
+            # Convert to string and handle NaN/None values
+            subject_string = str(subject_value)
+            
+            # Split by spaces and take the first word
+            words = subject_string.split()
+            if len(words) > 0:
+                first_word = words[0]
+            else:
+                first_word = subject_string  # Keep original if no spaces found
+            
+            first_words.append(first_word)
+        
+        # Replace the Subject column with first words
+        modified_df['Subject'] = first_words
+        
+        return modified_df
+        
+    except Exception as error:
+        print(f"Error extracting first words from Subject column: {error}")
+        return dataframe
+
 
 def main():
     # Convert XLSM file to XLSX
     input_file = r"docs\input\Katie_July_simple_titles.xlsm"
-    output_file = r"docs\output\Katie_July_simple_titles.xlsx"
+    output_file = r"docs\output\Katie_July_Collapsed.xlsx"
     
-    print("Converting XLSM to XLSX...")
-    if convert_xlsm_to_xlsx(input_file, output_file):
-        print(f"Successfully converted {input_file} to {output_file}")
-    else:
-        print("Conversion failed")
-    
-    # Original classification example
-    # phrase_classifier.create_dataset(samples_per_category=500)
-    # feed_back_classifier = phrase_classifier.Classifier()
-    # ans = feed_back_classifier.classify_text("they hung up on me!")
-    # print(f"Classification result: {ans}")
+    input_df = xlsx_to_dataframe(input_file)
+    modified_df = categorize_subjects(input_df)
+    collapsed_df = collapse_rows(modified_df)
+    output_df = dataframe_to_xlsx(collapsed_df, output_file)
+    print(f"Collapsed data saved to {output_file}")
 
 if __name__ == "__main__":
     main()
