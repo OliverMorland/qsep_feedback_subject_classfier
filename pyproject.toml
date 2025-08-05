@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qsep-feedback-subject-classifier"
+version = "0.1.0"
+description = "A feedback subject classifier for QSEP"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Oliver Morland", email = "omorland@swingtech.com"},
+    {name = "Joshua Ramthun", email = "jramthun@swingtech.com"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "phrase_classifier @ git+https://github.com/stussc/phrase_classifier.git"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["qsep_feedback_subject_classifier"]
