@@ -25,7 +25,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "phrase_classifier @ git+https://github.com/stussc/phrase_classifier.git"
+    "phrase_classifier @ git+https://github.com/stussc/phrase_classifier.git",
+    "pandas>=1.3.0",
+    "openpyxl>=3.0.0"
 ]
 
 [project.optional-dependencies]
