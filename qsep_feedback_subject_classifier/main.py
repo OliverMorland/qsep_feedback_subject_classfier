@@ -4,7 +4,7 @@ from qsep_feedback_subject_classifier.xlsm_to_xlsx_converter import convert_xlsm
 def main():
     # Convert XLSM file to XLSX
     input_file = r"docs\input\Katie_July_simple_titles.xlsm"
-    output_file = r"docs\output\Katie_July_simple_titles.xlsx"
+    output_file = r"docs\output\Katie_July_Collapsed.xlsx"
     
     print("Converting XLSM to XLSX...")
     if convert_xlsm_to_xlsx(input_file, output_file):

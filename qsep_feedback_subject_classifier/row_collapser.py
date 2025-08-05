@@ -1,4 +1,5 @@
 import pandas as pd
+from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx
 
 def generate_xlsx_with_collapsed_rows(input_file: str, output_file: str):
     """
@@ -152,25 +153,3 @@ def collapse_rows(input_dataframe: pd.DataFrame) -> pd.DataFrame:
     except Exception as general_error:
         print(f"DataFrame could not be created due to an unexpected error: {general_error}")
         return pd.DataFrame()
-
-def xlsx_to_dataframe(file_path: str) -> pd.DataFrame:
-    """
-    Read an XLSX file and return a DataFrame.
-
-    Args:
-        file_path (str): The path to the XLSX file.
-
-    Returns:
-        pd.DataFrame: The DataFrame containing the data from the XLSX file.
-    """
-    return pd.read_excel(file_path)
-
-def dataframe_to_xlsx(dataframe: pd.DataFrame, output_file_path: str):
-    """
-    Write a DataFrame to an XLSX file.
-
-    Args:
-        dataframe (pd.DataFrame): The DataFrame to write.
-        output_file_path (str): The path where the XLSX file will be saved.
-    """
-    dataframe.to_excel(output_file_path, index=False)
