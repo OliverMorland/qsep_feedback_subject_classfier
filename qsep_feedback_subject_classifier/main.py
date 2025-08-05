@@ -2,6 +2,7 @@ import phrase_classifier
 import pandas as pd
 from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
+from qsep_feedback_subject_classifier import categorize_label
 
 
 def categorize_subjects(dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -56,8 +57,8 @@ def main():
     output_file = r"docs\output\Katie_July_Collapsed.xlsx"
     
     input_df = xlsx_to_dataframe(input_file)
-    modified_df = categorize_subjects(input_df)
-    collapsed_df = collapse_rows(modified_df)
+    input_df.insert(1, 'Categorized_Subject', input_df['Subject'].apply(categorize_label.categorize))
+    collapsed_df = collapse_rows(input_df)
     output_df = dataframe_to_xlsx(collapsed_df, output_file)
     print(f"Collapsed data saved to {output_file}")
 

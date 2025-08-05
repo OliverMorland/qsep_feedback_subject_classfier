@@ -1,6 +1,9 @@
 import pandas as pd
 from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx
 
+SUBJECT_COLUMN = 'Subject'
+COLUMN_TO_COLLAPSE = 'Categorized_Subject'
+
 def generate_xlsx_with_collapsed_rows(input_file: str, output_file: str):
     """
     Read an XLSX file, collapse rows based on the 'Subject' column, and write the result to a new XLSX file.
@@ -51,7 +54,7 @@ def get_non_subject_columns(dataframe: pd.DataFrame) -> list:
     non_subject_columns = []
     
     for column_name in all_columns:
-        if column_name != 'Subject':
+        if column_name != COLUMN_TO_COLLAPSE and column_name != SUBJECT_COLUMN:
             non_subject_columns.append(column_name)
     
     return non_subject_columns
@@ -113,8 +116,8 @@ def create_collapsed_dataframe(aggregation_dict: dict, unique_subjects: list) ->
     
     # Reset index to make 'Subject' a regular column again
     collapsed = collapsed.reset_index()
-    collapsed = collapsed.rename(columns={'index': 'Subject'})
-    
+    collapsed = collapsed.rename(columns={'index': f'{COLUMN_TO_COLLAPSE}'})
+
     return collapsed
 
 
@@ -130,7 +133,7 @@ def collapse_rows(input_dataframe: pd.DataFrame) -> pd.DataFrame:
     """
     try:
         # Group by 'Subject'
-        grouped_data = input_dataframe.groupby('Subject')
+        grouped_data = input_dataframe.groupby(COLUMN_TO_COLLAPSE)
         
         # Get all column names except 'Subject'
         non_subject_columns = get_non_subject_columns(input_dataframe)

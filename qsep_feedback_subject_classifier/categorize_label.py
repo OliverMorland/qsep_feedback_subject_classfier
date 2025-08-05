@@ -1,5 +1,5 @@
 support_categories = {
-        "Account Activation": [],
+        "Account Activation": ["Account Activation, Certificate"],
         "Account Review": [],
         "Account Role Review": [],
         "Add/Remove": [],
@@ -11,7 +11,7 @@ support_categories = {
         "Facility Search": [],
         "FAQ Inquiry": [],
         "Feedback": [],
-        "HARP": [],
+        "HARP": ["Login, HARP", "Sign-Up, HARP"],
         "Incorrect Help Desk": [],
         "Issue": [],
         "Language Services": [],
