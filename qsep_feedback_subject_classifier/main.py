@@ -1,6 +1,54 @@
 import phrase_classifier
+import pandas as pd
 from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
+
+
+def extract_first_word_from_subject(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """
+    Replace strings in the 'Subject' column with only the first word.
+    
+    Args:
+        dataframe (pd.DataFrame): Input DataFrame with a 'Subject' column
+        
+    Returns:
+        pd.DataFrame: DataFrame with modified 'Subject' column containing only first words
+    """
+    try:
+        # Check if 'Subject' column exists
+        if 'Subject' not in dataframe.columns:
+            print("Warning: 'Subject' column not found in DataFrame")
+            return dataframe
+        
+        # Create a copy to avoid modifying the original DataFrame
+        modified_df = dataframe.copy()
+        
+        # Extract first word from each Subject entry
+        subject_values = modified_df['Subject']
+        first_words = []
+        
+        for subject_value in subject_values:
+            # Convert to string and handle NaN/None values
+            subject_string = str(subject_value)
+            
+            # Split by spaces and take the first word
+            words = subject_string.split()
+            if len(words) > 0:
+                first_word = words[0]
+            else:
+                first_word = subject_string  # Keep original if no spaces found
+            
+            first_words.append(first_word)
+        
+        # Replace the Subject column with first words
+        modified_df['Subject'] = first_words
+        
+        return modified_df
+        
+    except Exception as error:
+        print(f"Error extracting first words from Subject column: {error}")
+        return dataframe
+
 
 def main():
     # Convert XLSM file to XLSX
@@ -8,7 +56,8 @@ def main():
     output_file = r"docs\output\Katie_July_Collapsed.xlsx"
     
     input_df = xlsx_to_dataframe(input_file)
-    collapsed_df = collapse_rows(input_df)
+    modified_df = extract_first_word_from_subject(input_df)
+    collapsed_df = collapse_rows(modified_df)
     output_df = dataframe_to_xlsx(collapsed_df, output_file)
     print(f"Collapsed data saved to {output_file}")
 
