@@ -29,6 +29,17 @@ def main():
         # Store processed sheet
         categorized_sheets_dict[sheet_name] = collapsed_df
     
+    # Combine all processed sheets into a 'Total' sheet
+    print("Creating Total sheet by combining all processed sheets")
+    all_sheets_list = list(categorized_sheets_dict.values())
+    combined_df = pd.concat(all_sheets_list, ignore_index=True)
+    
+    # Collapse rows in the combined data
+    total_collapsed_df = collapse_rows(combined_df)
+    
+    # Add to the dictionary
+    categorized_sheets_dict['Total'] = total_collapsed_df
+    
     # Write all processed sheets to output file
     dataframes_dict_to_xlsx(categorized_sheets_dict, output_file)
     print(f"Collapsed data from {len(categorized_sheets_dict)} sheets saved to {output_file}")

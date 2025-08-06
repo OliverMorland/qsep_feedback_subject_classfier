@@ -7,8 +7,13 @@ QSEP Feedback Subject Classifier - A tool to categorize large lists of feedback 
 
 ### Testing
 ```bash
-python -m pytest "tests/unit/ritual_unit_test.py" -v
+"venv/Scripts/python.exe" -m pytest "tests/unit/" -v
 ```
+
+### Windows Command Line Requirements
+- **Use virtual environment**: Always use the Python executable from `venv/Scripts/python.exe`
+- **Path syntax**: Use forward slashes `/` in bash commands, even on Windows
+- **Quote paths**: Always quote file paths that contain spaces or special characters
 
 ## Project Structure
 - `tests/unit/` - Unit tests
