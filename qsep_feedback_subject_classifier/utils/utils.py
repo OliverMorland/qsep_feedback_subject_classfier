@@ -1,7 +1,18 @@
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
+import os
+import subprocess
+import platform
 
+def open_file(file_path):
+    system = platform.system()
+    if system == "Windows":
+        os.startfile(file_path)
+    elif system == "Darwin":  # macOS
+        subprocess.run(["open", file_path])
+    else:  # Linux and others
+        subprocess.run(["xdg-open", file_path])
 
 
 def xlsx_to_dataframe(file_path: str) -> pd.DataFrame:

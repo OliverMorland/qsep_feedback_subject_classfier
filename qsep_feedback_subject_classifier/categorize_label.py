@@ -74,7 +74,7 @@ def categorize(input_text):
     return "Other"
 
 def extract_mapping_from_excel():
-    df = pd.read_excel("docs\input\Category_Labeler.xlsx")
+    df = pd.read_excel("Category_Labeler.xlsx")
 
     # Convert DataFrame to dict of lists (column-wise)
     data_dict = df.to_dict(orient='list')

@@ -1,13 +1,9 @@
-import phrase_classifier
 import pandas as pd
 import pyperclip
 from pathlib import Path
-from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx, xlsx_to_dataframes_dict, dataframes_dict_to_xlsx
+from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframes_dict, dataframes_dict_to_xlsx, normalize_excel_and_save, open_file
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
 from qsep_feedback_subject_classifier import categorize_label
-from utils.utils import normalize_excel_and_save
-from openpyxl import load_workbook
-from openpyxl.worksheet.worksheet import Worksheet
 
 
 
@@ -17,7 +13,9 @@ def main():
     Path(input_file).expanduser().resolve()
     if not Path(input_file).exists():
         raise FileNotFoundError(f"File not found: {input_file}")
-    output_file = r"docs\output\Katie_July_Collapsed_all_sheets_NO_PREPROCESSING_TEST.xlsx"
+    input_path = Path(input_file)
+    new_name = input_path.stem + "_Collapsed.xlsx"
+    output_file = input_path.with_name(new_name)
 
     normalize_excel_and_save(input_file, "temporary_cleaned.xlsx")
     
@@ -53,6 +51,7 @@ def main():
     # Write all processed sheets to output file
     dataframes_dict_to_xlsx(categorized_sheets_dict, output_file)
     print(f"Collapsed data from {len(categorized_sheets_dict)} sheets saved to {output_file}")
+    open_file(output_file)
 
 if __name__ == "__main__":
     main()
