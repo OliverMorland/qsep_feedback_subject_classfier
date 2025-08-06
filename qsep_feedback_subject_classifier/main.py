@@ -5,7 +5,7 @@ from pathlib import Path
 from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
 from qsep_feedback_subject_classifier import categorize_label
-from utils.utils import unmerge_cells_and_fill, trim_rows_until_subject
+from utils.utils import unmerge_cells_and_fill, trim_rows_until_subject, delete_columns_with_no_header
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -68,6 +68,7 @@ def main():
 
     unmerge_cells_and_fill(ws)
     trim_rows_until_subject(ws)
+    delete_columns_with_no_header(ws)
     wb.save("test_clean.xlsx")
     
     # output_file = r"docs\output\Katie_July_Collapsed.xlsx"

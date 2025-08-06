@@ -28,10 +28,7 @@ def dataframe_to_xlsx(dataframe: pd.DataFrame, output_file_path: str):
 
 
 def unmerge_cells_and_fill(ws: Worksheet):
-    """
-    Unmerge all cells in a worksheet and fill the resulting cells 
-    with the top-left value from each merged range.
-    """
+   
     for merged_range in list(ws.merged_cells.ranges):
         top_left = ws.cell(row=merged_range.min_row, column=merged_range.min_col)
         value = top_left.value
@@ -47,9 +44,7 @@ def unmerge_cells_and_fill(ws: Worksheet):
 
 
 def trim_rows_until_subject(ws: Worksheet, keyword="Subject"):
-    """
-    Delete all rows above the first row that contains the keyword (default: "Subject").
-    """
+
     header_row_idx = None
     for row in ws.iter_rows(min_row=1, max_row=ws.max_row):
         for cell in row:
@@ -64,3 +59,10 @@ def trim_rows_until_subject(ws: Worksheet, keyword="Subject"):
 
     if header_row_idx > 1:
         ws.delete_rows(1, header_row_idx - 1)
+
+def delete_columns_with_no_header(ws: Worksheet):
+   
+    for col_idx in range(ws.max_column, 0, -1):
+        header_cell = ws.cell(row=1, column=col_idx)
+        if not header_cell.value or str(header_cell.value).strip() == "":
+            ws.delete_cols(col_idx)
