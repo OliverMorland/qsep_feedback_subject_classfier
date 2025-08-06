@@ -5,7 +5,7 @@ from pathlib import Path
 from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx, xlsx_to_dataframes_dict, dataframes_dict_to_xlsx
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
 from qsep_feedback_subject_classifier import categorize_label
-from utils.utils import unmerge_cells_and_fill, trim_rows_until_subject, delete_columns_with_no_header
+from utils.utils import normalize_excel_and_save
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -17,10 +17,12 @@ def main():
     Path(input_file).expanduser().resolve()
     if not Path(input_file).exists():
         raise FileNotFoundError(f"File not found: {input_file}")
-    output_file = r"docs\output\Katie_July_Collapsed_all_sheets.xlsx"
+    output_file = r"docs\output\Katie_July_Collapsed_all_sheets_NO_PREPROCESSING_TEST.xlsx"
+
+    normalize_excel_and_save(input_file, "temporary_cleaned.xlsx")
     
     # Read all sheets into a dictionary
-    input_sheets_dict = xlsx_to_dataframes_dict(input_file)
+    input_sheets_dict = xlsx_to_dataframes_dict("temporary_cleaned.xlsx")
     
     # Process each sheet
     categorized_sheets_dict = {}

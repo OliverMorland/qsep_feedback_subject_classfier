@@ -32,7 +32,10 @@ def sum_numerical_values(column_series):
         int: Sum of all numerical values in the series
     """
     # Fill NaN values with 0 and sum all values
-    filled_values = column_series.fillna(0)
+    numeric_series = pd.to_numeric(column_series, errors='coerce')
+
+    # Fill NaNs with 0 and sum
+    filled_values = numeric_series.fillna(0)
     total_sum = filled_values.sum()
     
     # Convert to integer

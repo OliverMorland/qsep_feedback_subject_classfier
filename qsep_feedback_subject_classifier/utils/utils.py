@@ -101,3 +101,17 @@ def delete_columns_with_no_header(ws: Worksheet):
         header_cell = ws.cell(row=1, column=col_idx)
         if not header_cell.value or str(header_cell.value).strip() == "":
             ws.delete_cols(col_idx)
+
+
+def normalize_excel_and_save(file_path: str, output_path: str) -> None:
+   
+    wb = load_workbook(file_path)
+
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+        unmerge_cells_and_fill(ws)
+        trim_rows_until_subject(ws)
+        delete_columns_with_no_header(ws)
+
+    # Save cleaned workbook
+    wb.save(output_path)
