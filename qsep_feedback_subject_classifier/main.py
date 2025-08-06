@@ -4,6 +4,7 @@ from pathlib import Path
 from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframes_dict, dataframes_dict_to_xlsx, normalize_excel_and_save, open_file
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
 from qsep_feedback_subject_classifier import categorize_label
+from pdf_reader import convert_pdf_to_df
 
 
 
@@ -18,10 +19,13 @@ def main():
     new_name = input_path.stem + "_Collapsed.xlsx"
     output_file = input_path.with_name(new_name)
 
-    normalize_excel_and_save(input_file, "temporary_cleaned.xlsx")
-    
-    # Read all sheets into a dictionary
-    input_sheets_dict = xlsx_to_dataframes_dict("temporary_cleaned.xlsx")
+    if input_file.endswith(".pdf"):
+        input_sheets_dict = convert_pdf_to_df(input_file)
+    else:
+        normalize_excel_and_save(input_file, "temporary_cleaned.xlsx")
+        
+        # Read all sheets into a dictionary
+        input_sheets_dict = xlsx_to_dataframes_dict("temporary_cleaned.xlsx")
     
     # Process each sheet
     categorized_sheets_dict = {}
