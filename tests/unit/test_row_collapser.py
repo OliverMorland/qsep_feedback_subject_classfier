@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
+from qsep_feedback_subject_classifier.row_collapser import SUBJECT_COLUMN, COLUMN_TO_COLLAPSE
 
 
 def test_collapse_rows_basic_functionality():
@@ -9,7 +10,7 @@ def test_collapse_rows_basic_functionality():
     """
     # Create test input data
     test_data = {
-        'Subject': ['Account', 'Account', 'FAQ Inquiry', 'Login', 'Login', 'Login'],
+        COLUMN_TO_COLLAPSE: ['Account', 'Account', 'FAQ Inquiry', 'Login', 'Login', 'Login'],
         'Identity': [1, 3, 5, 3, 3, 1],
         'Password': [None, None, 1, None, None, 2],
         'Profile': [1, 1, None, None, None, 1],
@@ -23,11 +24,11 @@ def test_collapse_rows_basic_functionality():
     
     # Verify the basic structure
     assert len(result_df) == 3, f"Expected 3 rows, got {len(result_df)}"
-    assert 'Subject' in result_df.columns, "Subject column should be present"
-    
+    assert COLUMN_TO_COLLAPSE in result_df.columns, "Subject column should be present"
+
     # Get unique subjects and sort for consistent testing
     expected_subjects = ['Account', 'FAQ Inquiry', 'Login']
-    actual_subjects = sorted(result_df['Subject'].tolist())
+    actual_subjects = sorted(result_df[COLUMN_TO_COLLAPSE].tolist())
     expected_subjects_sorted = sorted(expected_subjects)
     
     assert actual_subjects == expected_subjects_sorted, f"Expected subjects {expected_subjects_sorted}, got {actual_subjects}"
@@ -39,7 +40,7 @@ def test_collapse_rows_summed_values():
     """
     # Create test input data
     test_data = {
-        'Subject': ['Account', 'Account', 'FAQ Inquiry', 'Login', 'Login', 'Login'],
+        COLUMN_TO_COLLAPSE: ['Account', 'Account', 'FAQ Inquiry', 'Login', 'Login', 'Login'],
         'Identity': [1, 3, 5, 3, 3, 1],
         'Password': [None, None, 1, None, None, 2],
         'Profile': [1, 1, None, None, None, 1],
@@ -54,7 +55,7 @@ def test_collapse_rows_summed_values():
     # Create a dictionary for easier verification
     result_dict = {}
     for index, row in result_df.iterrows():
-        subject = row['Subject']
+        subject = row[COLUMN_TO_COLLAPSE]
         result_dict[subject] = row.to_dict()
     
     # Verify Account row (rows 0 and 1 combined: Identity 1+3=4, Profile 1+1=2, Count 2+0=2)
@@ -96,7 +97,7 @@ def test_collapse_rows_single_row():
     Test that collapse_rows handles a single row DataFrame correctly.
     """
     test_data = {
-        'Subject': ['Single'],
+        COLUMN_TO_COLLAPSE: ['Single'],
         'Identity': [1],
         'Count': [5]
     }
@@ -105,6 +106,6 @@ def test_collapse_rows_single_row():
     result_df = collapse_rows(input_df)
     
     assert len(result_df) == 1, "Single row should return single row"
-    assert result_df.iloc[0]['Subject'] == 'Single', "Subject should be preserved"
+    assert result_df.iloc[0][COLUMN_TO_COLLAPSE] == 'Single', "Subject should be preserved"
     assert result_df.iloc[0]['Identity'] == 1, "Identity should be 1"
     assert result_df.iloc[0]['Count'] == 5, "Count should be 5"
