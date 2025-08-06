@@ -1,4 +1,3 @@
-import phrase_classifier
 import pandas as pd
 import pyperclip
 from pathlib import Path
@@ -16,7 +15,9 @@ def main():
     input_file = pyperclip.paste().strip().strip('"')
     Path(input_file).expanduser().resolve()
     if not Path(input_file).exists():
-        raise FileNotFoundError(f"File not found: {input_file}")
+        raise FileNotFoundError(f"The following file was not found: '{input_file}'.\nPlease ensure the file path is correctly copied to the clipboard.")
+
+    print(f"Processing file: {input_file}")
     output_file = r"docs\output\Katie_July_Collapsed_all_sheets_NO_PREPROCESSING_TEST.xlsx"
 
     normalize_excel_and_save(input_file, "temporary_cleaned.xlsx")
