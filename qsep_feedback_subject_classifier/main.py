@@ -52,6 +52,8 @@ def main():
     dataframes_dict_to_xlsx(categorized_sheets_dict, output_file)
     print(f"Collapsed data from {len(categorized_sheets_dict)} sheets saved to {output_file}")
     open_file(output_file)
+    if Path("temporary_cleaned.xlsx").exists():
+        Path("temporary_cleaned.xlsx").unlink()
 
 if __name__ == "__main__":
     main()
