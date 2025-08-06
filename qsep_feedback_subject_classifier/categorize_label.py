@@ -50,6 +50,7 @@ support_categories = {
 
 
 def categorize(input_text):
+    input_text = str(input_text).strip()
     if input_text == "Count":
         return None
     for key, list in support_categories.items():
