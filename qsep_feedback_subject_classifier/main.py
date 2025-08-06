@@ -1,14 +1,22 @@
 import phrase_classifier
 import pandas as pd
+import pyperclip
+from pathlib import Path
 from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframe, dataframe_to_xlsx, xlsx_to_dataframes_dict, dataframes_dict_to_xlsx
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
 from qsep_feedback_subject_classifier import categorize_label
+from utils.utils import unmerge_cells_and_fill, trim_rows_until_subject, delete_columns_with_no_header
+from openpyxl import load_workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 
 
 def main():
     # Process all sheets from XLSM file
-    input_file = r"docs\input\Katie_July_simple_titles_all_sheets.xlsm"
+    input_file = pyperclip.paste().strip().strip('"')
+    Path(input_file).expanduser().resolve()
+    if not Path(input_file).exists():
+        raise FileNotFoundError(f"File not found: {input_file}")
     output_file = r"docs\output\Katie_July_Collapsed_all_sheets.xlsx"
     
     # Read all sheets into a dictionary
