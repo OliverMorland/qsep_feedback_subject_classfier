@@ -12,7 +12,8 @@ def main():
     input_file = pyperclip.paste().strip().strip('"')
     Path(input_file).expanduser().resolve()
     if not Path(input_file).exists():
-        raise FileNotFoundError(f"File not found: {input_file}")
+        raise FileNotFoundError(f"File not found: '{input_file}'. Please ensure you copied the correct file to your clipboard.")
+    print(f"Processing file: '{input_file}'")
     input_path = Path(input_file)
     new_name = input_path.stem + "_Collapsed.xlsx"
     output_file = input_path.with_name(new_name)
