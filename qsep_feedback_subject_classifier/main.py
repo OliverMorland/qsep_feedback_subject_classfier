@@ -39,6 +39,12 @@ def create_totals_summary_dataframe(categorized_sheets_dict):
     total_collapsed_df = collapse_rows(combined_df)
     return total_collapsed_df
 
+def create_categorization_map_dataframe(category_map):
+    category_df = pd.DataFrame.from_dict(category_map, orient='index').transpose()
+    category_df = category_df.loc[:, category_df.columns.notna()]
+    category_df = category_df.apply(deduplicate_column, axis=0)
+    return category_df
+
 
 def main():
     # Process all sheets from XLSM file
@@ -58,7 +64,7 @@ def main():
         processed_df = sheet_df.copy()
         processed_df.insert(1, COLUMN_TO_COLLAPSE, processed_df[SUBJECT_COLUMN].apply(categorize_label.categorize))
         for _, row in processed_df.iterrows():
-            category_map[row['Categorized_Subject']].append(row['Subject'])
+            category_map[row[COLUMN_TO_COLLAPSE]].append(row[SUBJECT_COLUMN])
 
         # Collapse rows
         collapsed_df = collapse_rows(processed_df)
@@ -81,12 +87,6 @@ def main():
     open_file(output_file)
     if Path("temporary_cleaned.xlsx").exists():
         Path("temporary_cleaned.xlsx").unlink()
-
-def create_categorization_map_dataframe(category_map):
-    category_df = pd.DataFrame.from_dict(category_map, orient='index').transpose()
-    category_df = category_df.loc[:, category_df.columns.notna()]
-    category_df = category_df.apply(deduplicate_column, axis=0)
-    return category_df
         
 
 if __name__ == "__main__":
