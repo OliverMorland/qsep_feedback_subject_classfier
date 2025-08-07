@@ -2,7 +2,7 @@ import pandas as pd
 import pyperclip
 from pathlib import Path
 from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframes_dict, dataframes_dict_to_xlsx, normalize_excel_and_save, open_file
-from qsep_feedback_subject_classifier.row_collapser import collapse_rows
+from qsep_feedback_subject_classifier.row_collapser import collapse_rows, SUBJECT_COLUMN, COLUMN_TO_COLLAPSE
 from qsep_feedback_subject_classifier import categorize_label
 from pdf_reader import convert_pdf_to_df
 
@@ -34,8 +34,8 @@ def main():
         
         # Add categorized subject column
         processed_df = sheet_df.copy()
-        processed_df.insert(1, 'Categorized_Subject', processed_df['Subject'].apply(categorize_label.categorize))
-        
+        processed_df.insert(1, COLUMN_TO_COLLAPSE, processed_df[SUBJECT_COLUMN].apply(categorize_label.categorize))
+
         # Collapse rows
         collapsed_df = collapse_rows(processed_df)
         
