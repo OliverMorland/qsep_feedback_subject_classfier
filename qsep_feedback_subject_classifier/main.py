@@ -1,7 +1,8 @@
+from collections import defaultdict
 import pandas as pd
 import pyperclip
 from pathlib import Path
-from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframes_dict, dataframes_dict_to_xlsx, normalize_excel_and_save, open_file
+from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframes_dict, dataframes_dict_to_xlsx, normalize_excel_and_save, open_file, deduplicate_column
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows
 from qsep_feedback_subject_classifier import categorize_label
 from pdf_reader import convert_pdf_to_df
@@ -28,6 +29,7 @@ def main():
         input_sheets_dict = xlsx_to_dataframes_dict("temporary_cleaned.xlsx")
     
     # Process each sheet
+    category_map = defaultdict(list)
     categorized_sheets_dict = {}
     for sheet_name, sheet_df in input_sheets_dict.items():
         print(f"Processing sheet: {sheet_name}")
@@ -35,6 +37,8 @@ def main():
         # Add categorized subject column
         processed_df = sheet_df.copy()
         processed_df.insert(1, 'Categorized_Subject', processed_df['Subject'].apply(categorize_label.categorize))
+        for _, row in processed_df.iterrows():
+            category_map[row['Categorized_Subject']].append(row['Subject'])
         
         # Collapse rows
         collapsed_df = collapse_rows(processed_df)
@@ -52,6 +56,11 @@ def main():
     
     # Add to the dictionary
     categorized_sheets_dict['Total'] = total_collapsed_df
+
+    category_df = pd.DataFrame.from_dict(category_map, orient='index').transpose()
+    category_df = category_df.loc[:, category_df.columns.notna()]
+    category_df = category_df.apply(deduplicate_column, axis=0)
+    categorized_sheets_dict['Subject Category Mapping'] = category_df   
     
     # Write all processed sheets to output file
     dataframes_dict_to_xlsx(categorized_sheets_dict, output_file)
@@ -59,6 +68,6 @@ def main():
     open_file(output_file)
     if Path("temporary_cleaned.xlsx").exists():
         Path("temporary_cleaned.xlsx").unlink()
-
+        
 if __name__ == "__main__":
     main()
