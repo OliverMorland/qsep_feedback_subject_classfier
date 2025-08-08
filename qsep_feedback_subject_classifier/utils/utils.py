@@ -126,3 +126,9 @@ def normalize_excel_and_save(file_path: str, output_path: str) -> None:
 
     # Save cleaned workbook
     wb.save(output_path)
+
+def deduplicate_column(col):
+    # Drop duplicates while keeping order, pad with NaN to retain original length
+    unique_vals = pd.Series(pd.unique(col.dropna()))
+    padded = unique_vals.reindex(range(len(col)))  # Fill with NaN if needed
+    return padded
