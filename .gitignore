@@ -4,4 +4,4 @@ venv/
 qsep_feedback_subject_classifier.egg-info/
 .claude/
 results/
-Category_Labeler.xlsx
+*.xlsx
