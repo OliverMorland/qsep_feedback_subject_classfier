@@ -62,9 +62,17 @@ def main():
         
         # Add categorized subject column
         processed_df = sheet_df.copy()
-        processed_df.insert(1, COLUMN_TO_COLLAPSE, processed_df[SUBJECT_COLUMN].apply(categorize_label.categorize))
+
+        subject_col = next((col for col in processed_df.columns 
+                            if col.lower() == SUBJECT_COLUMN.lower()), None)
+
+        if subject_col is None:
+            print(f"Warning: 'Subject' column not found in sheet '{sheet_name}'")
+            continue
+
+        processed_df.insert(1, COLUMN_TO_COLLAPSE, processed_df[subject_col].apply(categorize_label.categorize))
         for _, row in processed_df.iterrows():
-            category_map[row[COLUMN_TO_COLLAPSE]].append(row[SUBJECT_COLUMN])
+            category_map[row[COLUMN_TO_COLLAPSE]].append(row[subject_col])
 
         # Collapse rows
         collapsed_df = collapse_rows(processed_df)
