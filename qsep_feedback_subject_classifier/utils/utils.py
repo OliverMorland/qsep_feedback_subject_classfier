@@ -68,9 +68,19 @@ def dataframes_dict_to_xlsx(dataframes_dict: dict[str, pd.DataFrame], output_fil
     excel_writer = pd.ExcelWriter(output_file_path, engine='openpyxl')
     
     for sheet_name, dataframe in dataframes_dict.items():
+        dataframe = dataframe.style.apply(highlight_totals, axis=1)
         dataframe.to_excel(excel_writer, sheet_name=sheet_name, index=False)
+        
     
     excel_writer.close()
+
+def highlight_totals(val):
+    """Highlight totals row and column."""
+    if val.name == "Total":  # row
+        return ["background-color: yellow"] * len(val)
+    elif val.name == "Total" or "Total" in val.index:  # column
+        return ["background-color: yellow" if col == "Total" else "" for col in val.index]
+    return [""] * len(val)
 
 
 def unmerge_cells_and_fill(ws: Worksheet):
@@ -132,3 +142,25 @@ def deduplicate_column(col):
     unique_vals = pd.Series(pd.unique(col.dropna()))
     padded = unique_vals.reindex(range(len(col)))  # Fill with NaN if needed
     return padded
+
+def add_total_row_and_col(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Adds a 'Total' column (row-wise sums) and a 'Total' row (column-wise sums)
+    to the given DataFrame. Only numeric columns are summed.
+    """
+    df_out = df.copy()
+
+    # Add a Total column (sum across numeric columns per row)
+    df_out["Total"] = df_out.select_dtypes(include="number").sum(axis=1)
+
+    # Create a Total row (sum down numeric columns)
+    total_row = df_out.select_dtypes(include="number").sum()
+    total_row.name = "Total"
+
+    # If you want to label a non-numeric column (like 'Subject'), set it here
+    # Example: total_row["Subject"] = "TOTAL"
+
+    # Append the Total row
+    df_out = pd.concat([df_out, pd.DataFrame([total_row])])
+
+    return df_out

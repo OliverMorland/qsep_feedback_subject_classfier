@@ -2,7 +2,7 @@ from collections import defaultdict
 import pandas as pd
 import pyperclip
 from pathlib import Path
-from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframes_dict, dataframes_dict_to_xlsx, normalize_excel_and_save, open_file, deduplicate_column
+from qsep_feedback_subject_classifier.utils.utils import xlsx_to_dataframes_dict, dataframes_dict_to_xlsx, normalize_excel_and_save, open_file, deduplicate_column, add_total_row_and_col
 from qsep_feedback_subject_classifier.row_collapser import collapse_rows, SUBJECT_COLUMN, COLUMN_TO_COLLAPSE
 from qsep_feedback_subject_classifier import categorize_label
 from pdf_reader import convert_pdf_to_df
@@ -76,6 +76,7 @@ def main():
 
         # Collapse rows
         collapsed_df = collapse_rows(processed_df)
+        collapsed_df = add_total_row_and_col(collapsed_df)
         
         # Store processed sheet
         categorized_sheets_dict[sheet_name] = collapsed_df
