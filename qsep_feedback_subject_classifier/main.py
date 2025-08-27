@@ -76,7 +76,7 @@ def main():
 
         # Collapse rows
         collapsed_df = collapse_rows(processed_df)
-        collapsed_df = add_total_row_and_col(collapsed_df)
+        # collapsed_df = add_total_row_and_col(collapsed_df)
         
         # Store processed sheet
         categorized_sheets_dict[sheet_name] = collapsed_df

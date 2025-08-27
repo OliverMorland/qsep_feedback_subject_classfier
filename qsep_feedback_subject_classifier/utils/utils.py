@@ -68,19 +68,19 @@ def dataframes_dict_to_xlsx(dataframes_dict: dict[str, pd.DataFrame], output_fil
     excel_writer = pd.ExcelWriter(output_file_path, engine='openpyxl')
     
     for sheet_name, dataframe in dataframes_dict.items():
-        dataframe = dataframe.style.apply(highlight_totals, axis=1)
+        # dataframe = dataframe.style.apply(highlight_totals, axis=1)
         dataframe.to_excel(excel_writer, sheet_name=sheet_name, index=False)
         
     
     excel_writer.close()
 
-def highlight_totals(val):
-    """Highlight totals row and column."""
-    if val.name == "Total":  # row
-        return ["background-color: yellow"] * len(val)
-    elif val.name == "Total" or "Total" in val.index:  # column
-        return ["background-color: yellow" if col == "Total" else "" for col in val.index]
-    return [""] * len(val)
+# def highlight_totals(val):
+#     """Highlight totals row and column."""
+#     if val.name == "Total":  # row
+#         return ["background-color: yellow"] * len(val)
+#     elif val.name == "Total" or "Total" in val.index:  # column
+#         return ["background-color: yellow" if col == "Total" else "" for col in val.index]
+#     return [""] * len(val)
 
 
 def unmerge_cells_and_fill(ws: Worksheet):
